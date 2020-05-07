@@ -1172,6 +1172,44 @@ class MWSClient{
 	    return $result;
     }
 
+    public function GetInboundGuidanceForSKU($sku_array = []){
+
+        if (count($sku_array) > 50) {
+            throw new Exception('Maximum amount of SKU\'s for this call is 50');
+        }
+
+        $counter = 1;
+        $query = [
+            'MarketplaceId' => $this->config['Marketplace_Id']
+        ];
+
+        foreach($sku_array as $key){
+            $query['SellerSKUList.member.' . $counter] = $key;
+            $counter++;
+        }
+        $response = $this->request(
+            'GetInboundGuidanceForSKU',
+            $query
+        );
+        return $response;
+    }
+
+    public function ListInboundShipments($query){
+        $response = $this->request(
+            'ListInboundShipments',
+            $query
+        );
+        return $response;
+    }
+
+    public function ListInboundShipmentItems($query){
+        $response = $this->request(
+            'ListInboundShipmentItems',
+            $query
+        );
+        return $response;
+    }
+
     /**
      * Request MWS
      */

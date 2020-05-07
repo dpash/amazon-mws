@@ -145,6 +145,24 @@ class MWSEndPoint{
             'action' => 'GetLowestPricedOffersForASIN',
             'path' => '/Products/2011-10-01',
             'date' => '2011-10-01'
+        ],
+        'GetInboundGuidanceForSKU' => [
+            'method' => 'POST',
+            'action' => 'GetInboundGuidanceForSKU',
+            'path' => '/FulfillmentInboundShipment/2010-10-01',
+            'date' => '2010-10-01'
+        ],
+        'ListInboundShipments' => [
+            'method' => 'POST',
+            'action' => 'ListInboundShipments',
+            'path' => '/FulfillmentInboundShipment/2010-10-01',
+            'date' => '2010-10-01'
+        ],
+        'ListInboundShipmentItems' => [
+            'method' => 'POST',
+            'action' => 'ListInboundShipmentItems',
+            'path' => '/FulfillmentInboundShipment/2010-10-01',
+            'date' => '2010-10-01'
         ]
     ];
 
