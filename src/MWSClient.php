@@ -3,8 +3,6 @@ namespace Dpash\AmazonMWS;
 
 use DateTime;
 use Exception;
-use DateTimeZone;
-use Dpash\AmazonMWS\MWSEndPoint;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -19,7 +17,7 @@ class MWSClient{
     const DATE_FORMAT = "Y-m-d\TH:i:s.\\0\\0\\0\\Z";
     const APPLICATION_NAME = 'Dpash\AmazonMWS\MwsClient';
 
-    private $config = [
+    private array $config = [
         'Seller_Id' => null,
         'Marketplace_Id' => null,
         'Access_Key_ID' => null,
@@ -28,25 +26,30 @@ class MWSClient{
         'Application_Version' => '0.0.*'
     ];
 
-    private $MarketplaceIds = [
+    private array $MarketplaceIds = [
         'A2EUQ1WTGCTBG2' => 'mws.amazonservices.ca',
-        'ATVPDKIKX0DER' => 'mws.amazonservices.com',
+        'ATVPDKIKX0DER'  => 'mws.amazonservices.com',
         'A1AM78C64UM0Y8' => 'mws.amazonservices.com.mx',
         'A1PA6795UKMFR9' => 'mws-eu.amazonservices.com',
         'A1RKKUPIHCS9HS' => 'mws-eu.amazonservices.com',
         'A13V1IB3VIYZZH' => 'mws-eu.amazonservices.com',
-        'A21TJRUUN4KGV' => 'mws.amazonservices.in',
-        'APJ6JRA9NG5V4' => 'mws-eu.amazonservices.com',
+        'A21TJRUUN4KGV'  => 'mws.amazonservices.in',
+        'APJ6JRA9NG5V4'  => 'mws-eu.amazonservices.com',
         'A1F83G8C2ARO7P' => 'mws-eu.amazonservices.com',
         'A1VC38T7YXB528' => 'mws.amazonservices.jp',
-        'AAHKV2X7AFYLW' => 'mws.amazonservices.com.cn',
+        'AAHKV2X7AFYLW'  => 'mws.amazonservices.com.cn',
         'A39IBJ37TRP1C6' => 'mws.amazonservices.com.au',
-	'A2Q3Y263D00KWC' => 'mws.amazonservices.com'
+        'A2Q3Y263D00KWC' => 'mws.amazonservices.com'
     ];
 
-    protected $debugNextFeed = false;
-    protected $client = NULL;
+    protected bool $debugNextFeed = false;
+    protected ?Client $client = NULL;
 
+    /**
+     * MWSClient constructor.
+     * @param array $config
+     * @throws Exception
+     */
     public function __construct(array $config)
     {
 
@@ -88,10 +91,11 @@ class MWSClient{
      * A method to quickly check if the supplied credentials are valid
      * @return boolean
      */
-    public function validateCredentials()
+    public function validateCredentials() : bool
     {
         try{
             $this->ListOrderItems('validate');
+            return false;
         } catch(Exception $e) {
             if ($e->getMessage() == 'Invalid AmazonOrderId: validate') {
                 return true;
@@ -105,8 +109,9 @@ class MWSClient{
      * Returns the current competitive price of a product, based on ASIN.
      * @param array [$asin_array = []]
      * @return array
+     * @throws Exception
      */
-    public function GetCompetitivePricingForASIN($asin_array = [])
+    public function GetCompetitivePricingForASIN(array $asin_array = []) : array
     {
         if (count($asin_array) > 20) {
             throw new Exception('Maximum amount of ASIN\'s for this call is 20');
@@ -145,11 +150,12 @@ class MWSClient{
         return $array;
 
     }
-    
-        /**
+
+    /**
      * Returns the current competitive price of a product, based on SKU.
      * @param array [$sku_array = []]
      * @return array
+     * @throws Exception
      */
     public function GetCompetitivePricingForSKU($sku_array = [])
     {
@@ -191,11 +197,13 @@ class MWSClient{
         return $array;
 
     }
+
     /**
      * Returns lowest priced offers for a single product, based on ASIN.
      * @param string $asin
      * @param string [$ItemCondition = 'New'] Should be one in: New, Used, Collectible, Refurbished, Club
      * @return array
+     * @throws Exception
      */
     public function GetLowestPricedOffersForASIN($asin, $ItemCondition = 'New')
     {
@@ -215,6 +223,7 @@ class MWSClient{
      * @param array  [$sku_array = []]
      * @param string [$ItemCondition = null]
      * @return array
+     * @throws Exception
      */
     public function GetMyPriceForSKU($sku_array = [], $ItemCondition = null)
     {
@@ -271,6 +280,7 @@ class MWSClient{
      * @param array [$asin_array = []]
      * @param string [$ItemCondition = null]
      * @return array
+     * @throws Exception
      */
     public function GetMyPriceForASIN($asin_array = [], $ItemCondition = null)
     {
@@ -323,6 +333,7 @@ class MWSClient{
      * @param array [$asin_array = []] array of ASIN values
      * @param array [$ItemCondition = null] Should be one in: New, Used, Collectible, Refurbished, Club. Default: All
      * @return array
+     * @throws Exception
      */
     public function GetLowestOfferListingsForASIN($asin_array = [], $ItemCondition = null)
     {
@@ -372,12 +383,13 @@ class MWSClient{
 
     /**
      * Returns orders created or updated during a time frame that you specify.
-     * @param object DateTime $from, beginning of time frame
-     * @param boolean $allMarketplaces, list orders from all marketplaces
-     * @param array $states, an array containing orders states you want to filter on
-     * @param string $FulfillmentChannel
-     * @param object DateTime $till, end of time frame
+     * @param DateTime $from, beginning of time frame
+     * @param boolean $allMarketplaces , list orders from all marketplaces
+     * @param array $states , an array containing orders states you want to filter on
+     * @param string $FulfillmentChannels
+     * @param DateTime $till  end of time frame
      * @return array
+     * @throws Exception
      */
     public function ListOrders(DateTime $from, $allMarketplaces = false, $states = [
         'Unshipped', 'PartiallyShipped'
@@ -436,10 +448,12 @@ class MWSClient{
             return [];
         }
     }
+
     /**
      * Returns orders created or updated during a time frame that you specify.
      * @param string $nextToken
      * @return array
+     * @throws Exception
      */
     public function ListOrdersByNextToken($nextToken)
     {
@@ -467,10 +481,12 @@ class MWSClient{
             return [];
         }
     }
+
     /**
      * Returns an order based on the AmazonOrderId values that you specify.
      * @param string $AmazonOrderId
      * @return array if the order is found, false if not
+     * @throws Exception
      */
     public function GetOrder($AmazonOrderId)
     {
@@ -489,6 +505,7 @@ class MWSClient{
      * Returns order items based on the AmazonOrderId that you specify.
      * @param string $AmazonOrderId
      * @return array
+     * @throws Exception
      */
     public function ListOrderItems($AmazonOrderId)
     {
@@ -509,6 +526,7 @@ class MWSClient{
      * Returns the parent product categories that a product belongs to, based on SellerSKU.
      * @param string $SellerSKU
      * @return array if found, false if not found
+     * @throws Exception
      */
     public function GetProductCategoriesForSKU($SellerSKU)
     {
@@ -528,6 +546,7 @@ class MWSClient{
      * Returns the parent product categories that a product belongs to, based on ASIN.
      * @param string $ASIN
      * @return array if found, false if not found
+     * @throws Exception
      */
     public function GetProductCategoriesForASIN($ASIN)
     {
@@ -549,6 +568,8 @@ class MWSClient{
      * @param array $asin_array A list of id's
      * @param string [$type = 'ASIN']  the identifier name
      * @return array
+     * @throws Exception
+     * @throws Exception
      */
     public function GetMatchingProductForId(array $asin_array, $type = 'ASIN')
     {
@@ -648,7 +669,7 @@ class MWSClient{
                             $image = $product['AttributeSets']['ItemAttributes']['SmallImage']['URL'];
                             $array['medium_image'] = $image;
                             $array['small_image'] = str_replace('._SL75_', '._SL50_', $image);
-                            $array['large_image'] = str_replace('._SL75_', '', $image);;
+                            $array['large_image'] = str_replace('._SL75_', '', $image);
                         }
                         if (isset($product['Relationships']['VariationParent']['Identifiers']['MarketplaceASIN']['ASIN'])) {
                             $array['Parentage'] = 'child';
@@ -678,6 +699,8 @@ class MWSClient{
      * @param string $query the open text query
      * @param string [$query_context_id = null] the identifier for the context within which the given search will be performed. see: http://docs.developer.amazonservices.com/en_US/products/Products_QueryContextIDs.html
      * @return array
+     * @throws Exception
+     * @throws Exception
      */
     public function ListMatchingProducts($query, $query_context_id = null)
     {
@@ -729,6 +752,7 @@ class MWSClient{
      * Returns a list of reports that were created in the previous 90 days.
      * @param array [$ReportTypeList = []]
      * @return array
+     * @throws Exception
      */
     public function GetReportList($ReportTypeList = [])
     {
@@ -748,6 +772,7 @@ class MWSClient{
      * Returns your active recommendations for a specific category or for all categories for a specific marketplace.
      * @param string [$RecommendationCategory = null] One of: Inventory, Selection, Pricing, Fulfillment, ListingQuality, GlobalSelling, Advertising
      * @return array/false if no result
+     * @throws Exception
      */
     public function ListRecommendations($RecommendationCategory = null)
     {
@@ -772,6 +797,7 @@ class MWSClient{
     /**
      * Returns a list of marketplaces that the seller submitting the request can sell in, and a list of participations that include seller-specific information in that marketplace
      * @return array
+     * @throws Exception
      */
     public function ListMarketplaceParticipations()
     {
@@ -783,11 +809,12 @@ class MWSClient{
         }
     }
 
-	/**
-	 * Delete product's based on SKU
-	 * @param string $array array containing sku's
-	 * @return array feed submission result
-	 */
+    /**
+     * Delete product's based on SKU
+     * @param array $array array containing skus
+     * @return array feed submission result
+     * @throws Exception
+     */
 	public function deleteProductBySKU(array $array) {
 
 		$feed = [
@@ -808,10 +835,11 @@ class MWSClient{
 		return $this->SubmitFeed('_POST_PRODUCT_DATA_', $feed);
 	}
 
-	/**
+    /**
      * Update a product's stock quantity
      * @param array $array array containing sku as key and quantity as value
      * @return array feed submission result
+     * @throws Exception
      */
     public function updateStock(array $array)
     {
@@ -840,6 +868,7 @@ class MWSClient{
      *
      * @param array $array array containing arrays with next keys: [sku, quantity, latency]
      * @return array feed submission result
+     * @throws Exception
      */
     public function updateStockWithFulfillmentLatency(array $array)
     {
@@ -866,10 +895,11 @@ class MWSClient{
     /**
      * Update a product's price
      * @param array $standardprice an array containing sku as key and price as value
-     * @param array $salesprice an optional array with sku as key and value consisting of an array with key/value pairs for SalePrice, StartDate, EndDate
+     * @param array $saleprice an optional array with sku as key and value consisting of an array with key/value pairs for SalePrice, StartDate, EndDate
      * Dates in DateTime object
      * Price has to be formatted as XSD Numeric Data Type (http://www.w3schools.com/xml/schema_dtypes_numeric.asp)
      * @return array feed submission result
+     * @throws Exception
      */
     public function updatePrice(array $standardprice, array $saleprice = null) {
 
@@ -910,8 +940,9 @@ class MWSClient{
 
     /**
      * Post to create or update a product (_POST_FLAT_FILE_LISTINGS_DATA_)
-     * @param  object $MWSProduct or array of MWSProduct objects
+     * @param object $MWSProduct or array of MWSProduct objects
      * @return array
+     * @throws Exception
      */
     public function postProduct($MWSProduct) {
 
@@ -952,6 +983,7 @@ class MWSClient{
      * Returns the feed processing report and the Content-MD5 header.
      * @param string $FeedSubmissionId
      * @return array
+     * @throws Exception
      */
     public function GetFeedSubmissionResult($FeedSubmissionId)
     {
@@ -971,7 +1003,9 @@ class MWSClient{
      * @param string $FeedType (http://docs.developer.amazonservices.com/en_US/feeds/Feeds_FeedType.html)
      * @param mixed $feedContent Array will be converted to xml using https://github.com/spatie/array-to-xml. Strings will not be modified.
      * @param boolean $debug Return the generated xml and don't send it to amazon
+     * @param array $options
      * @return array
+     * @throws Exception
      */
     public function SubmitFeed($FeedType, $feedContent, $debug = false, $options = [])
     {
@@ -1021,7 +1055,7 @@ class MWSClient{
      * Convert an array to xml
      * @param $array array to convert
      * @param $customRoot [$customRoot = 'AmazonEnvelope']
-     * @return sting
+     * @return string
      */
     private function arrayToXml(array $array, $customRoot = 'AmazonEnvelope')
     {
@@ -1042,10 +1076,14 @@ class MWSClient{
      * Creates a report request and submits the request to Amazon MWS.
      * @param string $report (http://docs.developer.amazonservices.com/en_US/reports/Reports_ReportType.html)
      * @param DateTime [$StartDate = null]
-     * @param EndDate [$EndDate = null]
+     * @param DateTime [$EndDate = null]
      * @return string ReportRequestId
+     * @throws Exception
+     * @throws Exception
+     * @throws Exception
+     * @throws Exception
      */
-    public function RequestReport($report, $StartDate = null, $EndDate = null)
+    public function RequestReport(string $report, DateTime $StartDate = null, DateTime $EndDate = null)
     {
         $query = [
             'MarketplaceIdList.Id.1' => $this->config['Marketplace_Id'],
@@ -1084,6 +1122,7 @@ class MWSClient{
      * Get a report's content
      * @param string $ReportId
      * @return array on succes
+     * @throws Exception
      */
     public function GetReport($ReportId)
     {
@@ -1116,8 +1155,9 @@ class MWSClient{
 
     /**
      * Get a report's processing status
-     * @param string  $ReportId
+     * @param string $ReportId
      * @return array if the report is found
+     * @throws Exception
      */
     public function GetReportRequestStatus($ReportId)
     {
@@ -1172,6 +1212,14 @@ class MWSClient{
 	    return $result;
     }
 
+    /**
+     * Get a list's inventory for Amazon's fulfillment
+     *
+     * @param array $sku_array
+     *
+     * @return array
+     * @throws Exception
+     */
     public function GetInboundGuidanceForSKU($sku_array = []){
 
         if (count($sku_array) > 50) {
@@ -1187,31 +1235,51 @@ class MWSClient{
             $query['SellerSKUList.member.' . $counter] = $key;
             $counter++;
         }
-        $response = $this->request(
+        return $this->request(
             'GetInboundGuidanceForSKU',
             $query
         );
-        return $response;
     }
 
+
+    /**
+     * Get a list's inventory for Amazon's fulfillment
+     *
+     * @param array $query
+     *
+     * @return array
+     * @throws Exception
+     */
     public function ListInboundShipments($query){
-        $response = $this->request(
+        return $this->request(
             'ListInboundShipments',
             $query
         );
-        return $response;
     }
 
+    /**
+     * Get a list's inventory for Amazon's fulfillment
+     *
+     * @param array $query
+     *
+     * @return array
+     * @throws Exception
+     */
     public function ListInboundShipmentItems($query){
-        $response = $this->request(
+        return $this->request(
             'ListInboundShipmentItems',
             $query
         );
-        return $response;
     }
 
     /**
      * Request MWS
+     * @param $endPoint
+     * @param array $query
+     * @param null $body
+     * @param bool $raw
+     * @return array|string
+     * @throws Exception
      */
     private function request($endPoint, array $query = [], $body = null, $raw = false)
     {
@@ -1321,7 +1389,7 @@ class MWSClient{
                     $message = $error->Error->Message;
                 }
             } else {
-                $message = 'An error occured';
+                $message = 'An error occurred';
             }
             throw new Exception($message);
         }

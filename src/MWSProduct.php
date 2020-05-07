@@ -5,13 +5,13 @@ use Exception;
 
 class MWSProduct{
 
-    public $sku;
-    public $price;
-    public $quantity = 0;
-    public $product_id;
-    public $product_id_type;
-    public $condition_type = 'New';
-    public $condition_note;
+    public string $sku;
+    public string $price;
+    public int $quantity = 0;
+    public string $product_id;
+    public string $product_id_type;
+    public string $condition_type = 'New';
+    public string $condition_note;
     
     private $validation_errors = [];
     
