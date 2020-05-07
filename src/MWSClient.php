@@ -2,6 +2,7 @@
 namespace Dpash\AmazonMWS;
 
 use DateTime;
+use Dpash\AmazonMWS\Result\GetReportResult;
 use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
@@ -1121,35 +1122,36 @@ class MWSClient{
     /**
      * Get a report's content
      * @param string $ReportId
-     * @return array on succes
+     * @return GetReportResult data
      * @throws Exception
      */
-    public function GetReport($ReportId)
+    public function GetReport($ReportId) : GetReportResult
     {
         $status = $this->GetReportRequestStatus($ReportId);
 
-        if ($status !== false && $status['ReportProcessingStatus'] === '_DONE_NO_DATA_') {
-            return [];
-        } else if ($status !== false && $status['ReportProcessingStatus'] === '_DONE_') {
+        if ($status === false) {
+            return new GetReportResult(false, $status['ReportProcessingStatus']);
+        }
 
-            $result = $this->request('GetReport', [
-                'ReportId' => $status['GeneratedReportId']
-            ]);
+        switch ($status['ReportProcessingStatus']) {
+            case '_DONE_':
+                $result = $this->request('GetReport', [
+                    'ReportId' => $status['GeneratedReportId']
+                ]);
 
-            if (is_string($result)) {
-                $csv = Reader::createFromString($result);
-                $csv->setDelimiter("\t");
-                $headers = $csv->fetchOne();
-                $result = [];
-                foreach ($csv->setOffset(1)->fetchAll() as $row) {
-                    $result[] = array_combine($headers, $row);
+                if (is_string($result)) {
+                    $csv = Reader::createFromString($result);
+                    $csv->setDelimiter("\t");
+                    $headers = $csv->fetchOne();
+                    $result = [];
+                    foreach ($csv->setOffset(1)->fetchAll() as $row) {
+                        $result[] = array_combine($headers, $row);
+                    }
                 }
-            }
 
-            return $result;
-
-        } else {
-            return false;
+                return new GetReportResult(true,  $status['ReportProcessingStatus'], $result);
+            default:
+                return new GetReportResult(false, $status['ReportProcessingStatus']);
         }
     }
 
