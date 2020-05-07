@@ -1,5 +1,5 @@
 <?php
-namespace MCS;
+namespace Dpash\AmazonMWS;
 
 use Exception;
 

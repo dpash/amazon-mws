@@ -7,13 +7,13 @@ Interaction with the Amazon Api for vendors called MWS
 
 ### Installation:
 ```bash
-$ composer require mcs/amazon-mws
+$ composer require dpash/amazon-mws
 ```
 ### Initiate the client
 ```php
 require_once 'vendor/autoload.php';
 
-$client = new MCS\MWSClient([
+$client = new Dpash\AmazonMWS\MWSClient([
     'Marketplace_Id' => '',
     'Seller_Id' => '',
     'Access_Key_ID' => '',
@@ -50,7 +50,7 @@ print_r($result);
 ```
 ### Create or update a product
 ```php
-$product = new MCS\MWSProduct();
+$product = new Dpash\AmazonMWS\MWSProduct();
 $product->sku = 'TESTNOTFORSALE';
 $product->price = '1000.00';
 $product->product_id = 'B0031S9***';

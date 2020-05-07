@@ -1,10 +1,10 @@
 <?php
-namespace MCS;
+namespace Dpash\AmazonMWS;
 
 use DateTime;
 use Exception;
 use DateTimeZone;
-use MCS\MWSEndPoint;
+use Dpash\AmazonMWS\MWSEndPoint;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -17,7 +17,7 @@ class MWSClient{
     const SIGNATURE_METHOD = 'HmacSHA256';
     const SIGNATURE_VERSION = '2';
     const DATE_FORMAT = "Y-m-d\TH:i:s.\\0\\0\\0\\Z";
-    const APPLICATION_NAME = 'MCS/MwsClient';
+    const APPLICATION_NAME = 'Dpash\AmazonMWS\MwsClient';
 
     private $config = [
         'Seller_Id' => null,

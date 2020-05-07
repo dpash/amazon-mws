@@ -13,7 +13,7 @@ final class MWSClientTest extends TestCase {
   ];
 
   public function testValidateCredentialsOnWrongCredentials(): void {
-    $stub = $this->getMockBuilder(\MCS\MWSClient::class)
+    $stub = $this->getMockBuilder(\Dpash\AmazonMWS\MWSClient::class)
       ->disableOriginalConstructor()
       ->setMethods(['ListOrderItems'])
       ->getMock();
@@ -25,7 +25,7 @@ final class MWSClientTest extends TestCase {
   }
 
   public function testValidateCredentialsOnRightCredentials(): void {
-    $stub = $this->getMockBuilder(\MCS\MWSClient::class)
+    $stub = $this->getMockBuilder(\Dpash\AmazonMWS\MWSClient::class)
       ->disableOriginalConstructor()
       ->setMethods(['ListOrderItems'])
       ->getMock();
