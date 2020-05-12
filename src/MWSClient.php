@@ -153,7 +153,7 @@ class MWSClient{
         $response = $this->request(
             'GetCompetitivePricingForASIN',
             $query
-        );
+        )->xmlBody;
 
         if (isset($response['GetCompetitivePricingForASINResult'])) {
             $response = $response['GetCompetitivePricingForASINResult'];
@@ -199,7 +199,7 @@ class MWSClient{
         $response = $this->request(
             'GetCompetitivePricingForSKU',
             $query
-        );
+        )->xmlBody;
 
         if (isset($response['GetCompetitivePricingForSKUResult'])) {
             $response = $response['GetCompetitivePricingForSKUResult'];
@@ -237,7 +237,7 @@ class MWSClient{
             'ItemCondition' => $ItemCondition
         ];
 
-        return $this->request( 'GetLowestPricedOffersForASIN', $query );
+        return $this->request( 'GetLowestPricedOffersForASIN', $query )->body;
 
     }
 
@@ -271,7 +271,7 @@ class MWSClient{
         $response = $this->request(
             'GetMyPriceForSKU',
             $query
-        );
+        )->xmlBody;
 
         if (isset($response['GetMyPriceForSKUResult'])) {
             $response = $response['GetMyPriceForSKUResult'];
@@ -328,7 +328,7 @@ class MWSClient{
         $response = $this->request(
             'GetMyPriceForASIN',
             $query
-        );
+        )->xmlBody;
 
         if (isset($response['GetMyPriceForASINResult'])) {
             $response = $response['GetMyPriceForASINResult'];
@@ -381,7 +381,7 @@ class MWSClient{
         $response = $this->request(
             'GetLowestOfferListingsForASIN',
             $query
-        );
+        )->xmlBody;
 
         if (isset($response['GetLowestOfferListingsForASINResult'])) {
             $response = $response['GetLowestOfferListingsForASINResult'];
@@ -450,7 +450,7 @@ class MWSClient{
             $query['FulfillmentChannel.Channel.1'] = $FulfillmentChannels;
         }
 
-        $response = $this->request('ListOrders', $query);
+        $response = $this->request('ListOrders', $query)->xmlBody;
 
         if (isset($response['ListOrdersResult']['Orders']['Order'])) {
             if (isset($response['ListOrdersResult']['NextToken'])) {
@@ -458,15 +458,15 @@ class MWSClient{
                 $data['NextToken'] = $response['ListOrdersResult']['NextToken'];
                 return $data;
             }
-        
+
             $response = $response['ListOrdersResult']['Orders']['Order'];
-        
+
             if (array_keys($response) !== range(0, count($response) - 1)) {
                 return [$response];
             }
-        
+
             return $response;
-        
+
         } else {
             return [];
         }
@@ -487,7 +487,7 @@ class MWSClient{
         $response = $this->request(
             'ListOrdersByNextToken',
             $query
-        );
+        )->xmlBody;
         if (isset($response['ListOrdersByNextTokenResult']['Orders']['Order'])) {
             if(isset($response['ListOrdersByNextTokenResult']['NextToken'])){
                 $data['ListOrders'] = $response['ListOrdersByNextTokenResult']['Orders']['Order'];
@@ -515,7 +515,7 @@ class MWSClient{
     {
         $response = $this->request('GetOrder', [
             'AmazonOrderId.Id.1' => $AmazonOrderId
-        ]);
+        ])->xmlBody;
 
         if (isset($response['GetOrderResult']['Orders']['Order'])) {
             return $response['GetOrderResult']['Orders']['Order'];
@@ -534,7 +534,7 @@ class MWSClient{
     {
         $response = $this->request('ListOrderItems', [
             'AmazonOrderId' => $AmazonOrderId
-        ]);
+        ])->xmlBody;
 
         $result = array_values($response['ListOrderItemsResult']['OrderItems']);
 
@@ -556,7 +556,7 @@ class MWSClient{
         $result = $this->request('GetProductCategoriesForSKU', [
             'MarketplaceId' => $this->config['Marketplace_Id'],
             'SellerSKU' => $SellerSKU
-        ]);
+        ])->xmlBody;
 
         if (isset($result['GetProductCategoriesForSKUResult']['Self'])) {
             return $result['GetProductCategoriesForSKUResult']['Self'];
@@ -576,7 +576,7 @@ class MWSClient{
         $result = $this->request('GetProductCategoriesForASIN', [
             'MarketplaceId' => $this->config['Marketplace_Id'],
             'ASIN' => $ASIN
-        ]);
+        ])->xmlBody;
 
         if (isset($result['GetProductCategoriesForASINResult']['Self'])) {
             return $result['GetProductCategoriesForASINResult']['Self'];
@@ -618,7 +618,7 @@ class MWSClient{
             $array,
             null,
             true
-        );
+        )->rawBody;
 
         $languages = [
             'de-DE', 'en-EN', 'es-ES', 'fr-FR', 'it-IT', 'en-US'
@@ -743,7 +743,7 @@ class MWSClient{
             $array,
             null,
             true
-        );
+        )->rawBody;
 
 
 
@@ -788,7 +788,7 @@ class MWSClient{
             }
         }
 
-        return $this->request('GetReportList', $array);
+        return $this->request('GetReportList', $array)->body;
     }
 
     /**
@@ -807,7 +807,7 @@ class MWSClient{
             $query['RecommendationCategory'] = $RecommendationCategory;
         }
 
-        $result = $this->request('ListRecommendations', $query);
+        $result = $this->request('ListRecommendations', $query)->xmlBody;
 
         if (isset($result['ListRecommendationsResult'])) {
             return $result['ListRecommendationsResult'];
@@ -824,7 +824,7 @@ class MWSClient{
      */
     public function ListMarketplaceParticipations()
     {
-        $result = $this->request('ListMarketplaceParticipations');
+        $result = $this->request('ListMarketplaceParticipations')->xmlBody;
         if (isset($result['ListMarketplaceParticipationsResult'])) {
             return $result['ListMarketplaceParticipationsResult'];
         } else {
@@ -1012,7 +1012,7 @@ class MWSClient{
     {
         $result = $this->request('GetFeedSubmissionResult', [
             'FeedSubmissionId' => $FeedSubmissionId
-        ]);
+        ])->xmlBody;
 
         if (isset($result['Message']['ProcessingReport'])) {
             return $result['Message']['ProcessingReport'];
@@ -1052,7 +1052,7 @@ class MWSClient{
         }
 
 	$purgeAndReplace = isset($options['PurgeAndReplace']) ? $options['PurgeAndReplace'] : false;
-	    
+
         $query = [
             'FeedType' => $FeedType,
             'PurgeAndReplace' => ($purgeAndReplace ? 'true' : 'false'),
@@ -1069,7 +1069,7 @@ class MWSClient{
             'SubmitFeed',
             $query,
             $feedContent
-        );
+        )->xmlBody;
 
         return $response['SubmitFeedResult']['FeedSubmissionInfo'];
     }
@@ -1132,7 +1132,7 @@ class MWSClient{
         $result = $this->request(
             'RequestReport',
             $query
-        );
+        )->xmlBody;
 
         if (isset($result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'])) {
             return $result['RequestReportResult']['ReportRequestInfo']['ReportRequestId'];
@@ -1161,8 +1161,8 @@ class MWSClient{
                     'ReportId' => $status['GeneratedReportId']
                 ]);
 
-                if (is_string($result)) {
-                    $csv = Reader::createFromString($result);
+                if (is_string($result->body)) {
+                    $csv = Reader::createFromString($result->body);
                     $csv->setDelimiter("\t");
                     $headers = $csv->fetchOne();
                     $result = [];
@@ -1187,7 +1187,7 @@ class MWSClient{
     {
         $result = $this->request('GetReportRequestList', [
             'ReportRequestIdList.Id.1' => $ReportId
-        ]);
+        ])->xmlBody;
 
         if (isset($result['GetReportRequestListResult']['ReportRequestInfo'])) {
             return $result['GetReportRequestListResult']['ReportRequestInfo'];
@@ -1196,7 +1196,7 @@ class MWSClient{
         return false;
 
     }
-    
+
     /**
 	 * Get a list's inventory for Amazon's fulfillment
 	 *
@@ -1206,33 +1206,33 @@ class MWSClient{
 	 * @throws Exception
 	 */
     public function ListInventorySupply($sku_array = []){
-	
+
 	    if (count($sku_array) > 50) {
 		    throw new Exception('Maximum amount of SKU\'s for this call is 50');
 	    }
-	
+
 	    $counter = 1;
 	    $query = [
 		    'MarketplaceId' => $this->config['Marketplace_Id']
 	    ];
-	
+
 	    foreach($sku_array as $key){
 		    $query['SellerSkus.member.' . $counter] = $key;
 		    $counter++;
 	    }
-	
+
 	    $response = $this->request(
 		    'ListInventorySupply',
 		    $query
-	    );
-	
+	    )->xmlBody;
+
 	    $result = [];
 	    if (isset($response['ListInventorySupplyResult']['InventorySupplyList']['member'])) {
 		    foreach ($response['ListInventorySupplyResult']['InventorySupplyList']['member'] as $index => $ListInventorySupplyResult) {
 			    $result[$index] = $ListInventorySupplyResult;
 		    }
 	    }
-	    
+
 	    return $result;
     }
 
@@ -1262,7 +1262,7 @@ class MWSClient{
         return $this->request(
             'GetInboundGuidanceForSKU',
             $query
-        );
+        )->body;
     }
 
 
@@ -1278,7 +1278,7 @@ class MWSClient{
         return $this->request(
             'ListInboundShipments',
             $query
-        );
+        )->body;
     }
 
     /**
@@ -1293,7 +1293,7 @@ class MWSClient{
         return $this->request(
             'ListInboundShipmentItems',
             $query
-        );
+        )->body;
     }
 
     /**
@@ -1302,10 +1302,10 @@ class MWSClient{
      * @param array $query
      * @param null $body
      * @param bool $raw
-     * @return array|string
+     * @return MWSResult
      * @throws Exception
      */
-    private function request($endPoint, array $query = [], $body = null, $raw = false)
+    private function request($endPoint, array $query = [], $body = null, $raw = false): MWSResult
     {
 
         $endPoint = MWSEndPoint::get($endPoint);
@@ -1380,7 +1380,7 @@ class MWSClient{
             );
 
             $requestOptions['query'] = $query;
-            
+
             if($this->client === NULL) {
                 $this->client = new Client();
             }
@@ -1391,18 +1391,7 @@ class MWSClient{
                 $requestOptions
             );
 
-
-
-            $body = (string) $response->getBody();
-
-
-            if ($raw) {
-                return $body;
-            } else if (strpos(strtolower($response->getHeader('Content-Type')[0]), 'xml') !== false) {
-                return $this->xmlToArray($body);
-            } else {
-                return $body;
-            }
+            return new MWSResult($response);
 
         } catch (BadResponseException $e) {
             $error = new MWSErrorResult($e);
@@ -1430,7 +1419,7 @@ class MWSClient{
             }
         }
     }
-    
+
     public function setClient(Client $client) {
         $this->client = $client;
     }
