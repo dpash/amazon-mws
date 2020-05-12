@@ -38,19 +38,31 @@ class MWSClient{
     ];
 
     private array $MarketplaceIds = [
-        'A2EUQ1WTGCTBG2' => 'mws.amazonservices.ca',
-        'ATVPDKIKX0DER'  => 'mws.amazonservices.com',
-        'A1AM78C64UM0Y8' => 'mws.amazonservices.com.mx',
-        'A1PA6795UKMFR9' => 'mws-eu.amazonservices.com',
-        'A1RKKUPIHCS9HS' => 'mws-eu.amazonservices.com',
-        'A13V1IB3VIYZZH' => 'mws-eu.amazonservices.com',
-        'A21TJRUUN4KGV'  => 'mws.amazonservices.in',
-        'APJ6JRA9NG5V4'  => 'mws-eu.amazonservices.com',
-        'A1F83G8C2ARO7P' => 'mws-eu.amazonservices.com',
-        'A1VC38T7YXB528' => 'mws.amazonservices.jp',
-        'AAHKV2X7AFYLW'  => 'mws.amazonservices.com.cn',
-        'A39IBJ37TRP1C6' => 'mws.amazonservices.com.au',
-        'A2Q3Y263D00KWC' => 'mws.amazonservices.com'
+        # https://docs.developer.amazonservices.com/en_US/dev_guide/DG_Endpoints.html
+        # North America Region
+        'A2Q3Y263D00KWC' => 'mws.amazonservices.com', # Brazil (BR)
+        'A2EUQ1WTGCTBG2' => 'mws.amazonservices.ca', # Canada (CA)
+        'A1AM78C64UM0Y8' => 'mws.amazonservices.com.mx', # Mexico (MX)
+        'ATVPDKIKX0DER'  => 'mws.amazonservices.com', # United States (US)
+
+        # Europe Region
+        'A2VIGQ35RCS4UG' => 'mws.amazonservices.ae', # United Arab Emirates (AE)
+        'A1PA6795UKMFR9' => 'mws-eu.amazonservices.com', # Germany (DE)
+        'ARBP9OOSHTCHU'  => 'mws-eu.amazonservices.com', # Egypt (EG)
+        'A1RKKUPIHCS9HS' => 'mws-eu.amazonservices.com', # Spain (ES)
+        'A13V1IB3VIYZZH' => 'mws-eu.amazonservices.com', # France (FR)
+        'A1F83G8C2ARO7P' => 'mws-eu.amazonservices.com', # United Kingdom (GB)
+        'A21TJRUUN4KGV'  => 'mws.amazonservices.in', # India (IN)
+        'APJ6JRA9NG5V4'  => 'mws-eu.amazonservices.com', # Italy (IT)
+        'A1805IZSGTT6HS' => 'mws-eu.amazonservices.com', # Netherlands (NL)
+        'A17E79C6D8DWNP' => 'mws-eu.amazonservices.com', # Saudi Arabia (SA)
+        'A33AVAJ2PDY3EV' =>	'mws-eu.amazonservices.com', # Turkey (TR)
+
+        # Far East Region
+        'A19VAU5U5O7RUS' => 'mws-fe.amazonservices.com', # Singapore (SG)
+        'A39IBJ37TRP1C6' => 'mws.amazonservices.com.au', # Australia (AU)
+        'A1VC38T7YXB528' => 'mws.amazonservices.jp', # Japan (JP)
+        'AAHKV2X7AFYLW'  => 'mws.amazonservices.com.cn', # China
     ];
 
     protected bool $debugNextFeed = false;
