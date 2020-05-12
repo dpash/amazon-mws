@@ -2,7 +2,17 @@
 namespace Dpash\AmazonMWS;
 
 use DateTime;
+use Dpash\AmazonMWS\Exceptions\AccessDeniedException;
+use Dpash\AmazonMWS\Exceptions\InputStreamDisconnectedException;
+use Dpash\AmazonMWS\Exceptions\InternalErrorException;
+use Dpash\AmazonMWS\Exceptions\InvalidAccessKeyIdException;
+use Dpash\AmazonMWS\Exceptions\InvalidAddressException;
+use Dpash\AmazonMWS\Exceptions\MWSException;
+use Dpash\AmazonMWS\Exceptions\QuotaExceededException;
+use Dpash\AmazonMWS\Exceptions\RequestThrottledException;
 use Dpash\AmazonMWS\Result\GetReportResult;
+use Dpash\AmazonMWS\Result\MWSErrorResult;
+use Dpash\AmazonMWS\Result\MWSResult;
 use Exception;
 use League\Csv\Reader;
 use League\Csv\Writer;
@@ -1383,17 +1393,29 @@ class MWSClient{
             }
 
         } catch (BadResponseException $e) {
-            if ($e->hasResponse()) {
-                $message = $e->getResponse();
-                $message = $message->getBody();
-                if (strpos($message, '<ErrorResponse') !== false) {
-                    $error = simplexml_load_string($message);
-                    $message = $error->Error->Message;
-                }
-            } else {
-                $message = 'An error occurred';
+            $error = new MWSErrorResult($e);
+            switch ($e->getCode()) {
+                case 400:
+                    throw new InputStreamDisconnectedException($error->message);
+                    // throw new InvalidParameterValue();
+                case 401:
+                    throw new AccessDeniedException($error->message);
+                case 403:
+                    throw new InvalidAccessKeyIdException($error->message);
+                    // throw new SignatureDoesNotMatchException($message);
+                case 404:
+                    throw new InvalidAddressException($error->message);
+                case 500:
+                    throw new InternalErrorException($error->message);
+                case 503:
+                    if ($error->code === 'RequestThrottled') {
+                        throw new RequestThrottledException($error->message);
+                    } else {
+                        throw new QuotaExceededException($error->message);
+                    }
+                default:
+                    throw new MWSException($error->message);
             }
-            throw new Exception($message);
         }
     }
     
