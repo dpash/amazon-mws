@@ -1124,19 +1124,11 @@ class MWSClient{
         ];
 
         if (!is_null($StartDate)) {
-            if (!is_a($StartDate, 'DateTime')) {
-                throw new Exception('StartDate should be a DateTime object');
-            } else {
-                $query['StartDate'] = gmdate(self::DATE_FORMAT, $StartDate->getTimestamp());
-            }
+            $query['StartDate'] = gmdate(self::DATE_FORMAT, $StartDate->getTimestamp());
         }
 
         if (!is_null($EndDate)) {
-            if (!is_a($EndDate, 'DateTime')) {
-                throw new Exception('EndDate should be a DateTime object');
-            } else {
-                $query['EndDate'] = gmdate(self::DATE_FORMAT, $EndDate->getTimestamp());
-            }
+            $query['EndDate'] = gmdate(self::DATE_FORMAT, $EndDate->getTimestamp());
         }
 
         $result = $this->request(
