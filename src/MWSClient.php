@@ -511,11 +511,20 @@ class MWSClient{
      * @return array if the order is found, false if not
      * @throws Exception
      */
-    public function GetOrder($AmazonOrderId)
+    public function GetOrder($AmazonOrderIds)
     {
-        $response = $this->request('GetOrder', [
-            'AmazonOrderId.Id.1' => $AmazonOrderId
-        ])->xmlBody;
+        if(!is_array($AmazonOrderIds)){
+            $AmazonOrderIds = [$AmazonOrderIds];
+        }
+
+        $data = [];
+        $i=1;
+
+        foreach($AmazonOrderIds as $id){
+            $data['AmazonOrderId.Id.'.($i++)] = $id;
+        }
+
+        $response = $this->request('GetOrder', $data)->xmlBody;
 
         if (isset($response['GetOrderResult']['Orders']['Order'])) {
             return $response['GetOrderResult']['Orders']['Order'];
