@@ -10,6 +10,7 @@ use Dpash\AmazonMWS\Exceptions\InvalidAddressException;
 use Dpash\AmazonMWS\Exceptions\MWSException;
 use Dpash\AmazonMWS\Exceptions\QuotaExceededException;
 use Dpash\AmazonMWS\Exceptions\RequestThrottledException;
+use Dpash\AmazonMWS\Result\GetReportRequestStatusResult;
 use Dpash\AmazonMWS\Result\GetReportResult;
 use Dpash\AmazonMWS\Result\MWSErrorResult;
 use Dpash\AmazonMWS\Result\MWSResult;
@@ -1154,20 +1155,20 @@ class MWSClient{
      * Get a report's content
      * @param string $ReportId
      * @return GetReportResult data
-     * @throws Exception
+     * @throws MWSException
      */
     public function GetReport($ReportId) : GetReportResult
     {
-        $status = $this->GetReportRequestStatus($ReportId);
+        $request_status = $this->GetReportRequestStatus($ReportId);
 
-        if ($status === false) {
-            return new GetReportResult(false, $status['ReportProcessingStatus']);
+        if ($request_status->status === false) {
+            return new GetReportResult(false, $request_status->processingStatus);
         }
 
-        switch ($status['ReportProcessingStatus']) {
+        switch ($request_status->processingStatus) {
             case '_DONE_':
                 $result = $this->request('GetReport', [
-                    'ReportId' => $status['GeneratedReportId']
+                    'ReportId' => $request_status->reportId
                 ]);
 
                 if (is_string($result->body)) {
@@ -1180,30 +1181,25 @@ class MWSClient{
                     }
                 }
 
-                return new GetReportResult(true,  $status['ReportProcessingStatus'], $result);
+                return new GetReportResult(true,  $request_status->processingStatus, $result);
             default:
-                return new GetReportResult(false, $status['ReportProcessingStatus']);
+                return new GetReportResult(false, $request_status->processingStatus);
         }
     }
 
     /**
      * Get a report's processing status
      * @param string $ReportId
-     * @return array if the report is found
-     * @throws Exception
+     * @return GetReportRequestStatusResult the result of the call
+     * @throws MWSException
      */
-    public function GetReportRequestStatus($ReportId)
+    public function GetReportRequestStatus($ReportId) : GetReportRequestStatusResult
     {
         $result = $this->request('GetReportRequestList', [
             'ReportRequestIdList.Id.1' => $ReportId
-        ])->xmlBody;
+        ]);
 
-        if (isset($result['GetReportRequestListResult']['ReportRequestInfo'])) {
-            return $result['GetReportRequestListResult']['ReportRequestInfo'];
-        }
-
-        return false;
-
+        return new GetReportRequestStatusResult($result);
     }
 
     /**
@@ -1312,7 +1308,7 @@ class MWSClient{
      * @param null $body
      * @param bool $raw
      * @return MWSResult
-     * @throws Exception
+     * @throws MWSException
      */
     private function request($endPoint, array $query = [], $body = null, $raw = false): MWSResult
     {
