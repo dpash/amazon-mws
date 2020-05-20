@@ -39,6 +39,7 @@ class GetReportRequestStatusResult
         $this->startDate = $this->data['StartDate'];
 
         switch ($this->processingStatus) {
+            case '_DONE_NO_DATA_':
             case '_DONE_':
                 $this->completedDate = $this->data['CompletedDate'];
                 $this->reportId = $this->data['GeneratedReportId'];
