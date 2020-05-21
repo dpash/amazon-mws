@@ -1407,9 +1407,9 @@ class MWSClient{
                     throw new InternalErrorException($error->message);
                 case 503:
                     if ($error->code === 'RequestThrottled') {
-                        throw new RequestThrottledException($error->message);
+                        throw new RequestThrottledException($error->message, $e);
                     } else {
-                        throw new QuotaExceededException($error->message);
+                        throw new QuotaExceededException($error->message, $e);
                     }
                 default:
                     throw new MWSException($error->message);
