@@ -6,9 +6,9 @@ namespace Dpash\AmazonMWS\Result;
 
 class GetReportRequestStatusResult
 {
+    use HasResult;
 
     public bool $status = true;
-    public MWSResult $result;
     public array $data;
     public string $processingStatus;
     public string $reportId;
@@ -19,7 +19,7 @@ class GetReportRequestStatusResult
      */
     public function __construct(MWSResult $result)
     {
-        $this->result = $result;
+        $this->setResult($result);
 
         $body = $result->xmlBody;
 

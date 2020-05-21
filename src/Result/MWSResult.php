@@ -12,6 +12,9 @@ class MWSResult
     public string $rawBody;
     public $body;
     public array $xmlBody = [];
+    public int $quota_max;
+    public int $quota_remaining;
+    public \DateTime $quota_reset;
 
     /**
      * MWSResult constructor.
@@ -21,6 +24,10 @@ class MWSResult
     {
         $this->response = $response;
         $this->rawBody = (string) $response->getBody();
+
+        $this->quota_max = intval($response->getHeader('x-mws-quota-max')[0]);
+        $this->quota_remaining =  intval($response->getHeader('x-mws-quota-remaining')[0]);
+        $this->quota_reset =  new \DateTime($response->getHeader('x-mws-quota-resetsOn')[0]);
 
         if(preg_match('/^ERROR:/', $this->rawBody)) {
             throw new \Dpash\AmazonMWS\Exceptions\Exception($this->rawBody);
@@ -32,9 +39,25 @@ class MWSResult
         } else {
             $this->body = $this->rawBody;
         }
-
-
     }
+
+    /**
+     * @return string
+     */
+    public function getBody(): string
+    {
+        return $this->rawBody;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBodyAsHash(): array
+    {
+        return $this->xmlBody;
+    }
+
+
 
     /**
      * Convert an xml string to an array

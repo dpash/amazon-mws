@@ -1153,30 +1153,15 @@ class MWSClient{
     {
         $request_status = $this->GetReportRequestStatus($ReportId);
 
-        if ($request_status->status === false) {
-            return new GetReportResult(false, $request_status->processingStatus);
+        if ($request_status->status === false or $request_status->processingStatus !== '_DONE_') {
+            return new GetReportResult($request_status);
         }
 
-        switch ($request_status->processingStatus) {
-            case '_DONE_':
-                $result = $this->request('GetReport', [
-                    'ReportId' => $request_status->reportId
-                ]);
+        $result = $this->request('GetReport', [
+            'ReportId' => $request_status->reportId
+        ]);
 
-                if (is_string($result->body)) {
-                    $csv = Reader::createFromString($result->body);
-                    $csv->setDelimiter("\t");
-                    $headers = $csv->fetchOne();
-                    $result = [];
-                    foreach ($csv->setOffset(1)->fetchAll() as $row) {
-                        $result[] = array_combine($headers, $row);
-                    }
-                }
-
-                return new GetReportResult(true,  $request_status->processingStatus, $result);
-            default:
-                return new GetReportResult(false, $request_status->processingStatus);
-        }
+        return new GetReportResult($request_status,  $result);
     }
 
     /**
