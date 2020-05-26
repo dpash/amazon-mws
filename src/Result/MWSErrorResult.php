@@ -8,12 +8,27 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class MWSErrorResult
 {
-    public string $type;
-    public string $code;
-    public string $message;
-    public string $requestId;
+    /**
+     * @var \SimpleXMLElement|string
+     */
+    public $type;
+    /**
+     * @var \SimpleXMLElement|string
+     */
+    public $code;
+    /**
+     * @var \SimpleXMLElement|string
+     */
+    public $message;
+    /**
+     * @var \SimpleXMLElement|string
+     */
+    public $requestId;
 
-    public ResponseInterface $response;
+    /**
+     * @var \GuzzleHttp\Promise\PromiseInterface|ResponseInterface|null
+     */
+    public $response;
 
     /**
      * MWSErrorResult constructor.

@@ -8,7 +8,10 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class QuotaExceededException extends MWSException
 {
-    private \DateTime $quota_reset;
+    /**
+     * @var \DateTime
+     */
+    private $quota_reset;
     /**
      * QuotaExceededException constructor.
      */

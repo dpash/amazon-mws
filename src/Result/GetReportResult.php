@@ -11,9 +11,18 @@ class GetReportResult
 
     use HasResult;
 
-    public bool $success = true;
-    public array $data = [];
-    public string $status = "_UNKNOWN_";
+    /**
+     * @var bool
+     */
+    public $success = true;
+    /**
+     * @var array
+     */
+    public $data = [];
+    /**
+     * @var mixed|string
+     */
+    public $status = "_UNKNOWN_";
 
     /**
      * GetReportResult constructor.

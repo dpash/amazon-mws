@@ -7,7 +7,10 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class RequestThrottledException extends MWSException
 {
-    private \DateTime $quota_reset;
+    /**
+     * @var \DateTime
+     */
+    private $quota_reset;
 
     public function __construct(string $message, BadResponseException $exception) {
         parent::__construct($message, 0, $exception);

@@ -8,13 +8,31 @@ use GuzzleHttp\Psr7\Response;
 class MWSResult
 {
 
-    public Response $response;
-    public string $rawBody;
+    /**
+     * @var Response|object
+     */
+    public $response;
+    /**
+     * @var string
+     */
+    public $rawBody;
     public $body;
-    public array $xmlBody = [];
-    public int $quota_max;
-    public int $quota_remaining;
-    public \DateTime $quota_reset;
+    /**
+     * @var array
+     */
+    public $xmlBody = [];
+    /**
+     * @var int
+     */
+    public $quota_max;
+    /**
+     * @var int
+     */
+    public $quota_remaining;
+    /**
+     * @var \DateTime
+     */
+    public $quota_reset;
 
     /**
      * MWSResult constructor.

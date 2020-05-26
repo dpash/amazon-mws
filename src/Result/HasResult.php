@@ -7,7 +7,10 @@ namespace Dpash\AmazonMWS\Result;
 trait HasResult
 {
 
-    private MWSResult $result;
+    /**
+     * @var MWSResult
+     */
+    private $result;
 
     protected function setResult(MWSResult $result) {
         $this->result = $result;

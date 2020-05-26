@@ -29,7 +29,10 @@ class MWSClient{
     const DATE_FORMAT = "Y-m-d\TH:i:s.\\0\\0\\0\\Z";
     const APPLICATION_NAME = 'Dpash\AmazonMWS\MwsClient';
 
-    private array $config = [
+    /**
+     * @var array
+     */
+    private $config = [
         'Seller_Id' => null,
         'Marketplace_Id' => null,
         'Access_Key_ID' => null,
@@ -38,7 +41,10 @@ class MWSClient{
         'Application_Version' => '0.0.*'
     ];
 
-    private array $MarketplaceIds = [
+    /**
+     * @var string[]
+     */
+    private $MarketplaceIds = [
         # https://docs.developer.amazonservices.com/en_US/dev_guide/DG_Endpoints.html
         # North America Region
         'A2Q3Y263D00KWC' => 'mws.amazonservices.com', # Brazil (BR)
@@ -66,8 +72,14 @@ class MWSClient{
         'AAHKV2X7AFYLW'  => 'mws.amazonservices.com.cn', # China
     ];
 
-    protected bool $debugNextFeed = false;
-    protected ?Client $client = NULL;
+    /**
+     * @var bool
+     */
+    protected $debugNextFeed = false;
+    /**
+     * @var ?Client
+     */
+    protected $client = NULL;
 
     /**
      * MWSClient constructor.

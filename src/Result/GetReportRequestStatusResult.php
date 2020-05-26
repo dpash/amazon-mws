@@ -8,10 +8,22 @@ class GetReportRequestStatusResult
 {
     use HasResult;
 
-    public bool $status = true;
-    public array $data;
-    public string $processingStatus;
-    public string $reportId;
+    /**
+     * @var bool
+     */
+    public $status = true;
+    /**
+     * @var array|mixed
+     */
+    public $data;
+    /**
+     * @var mixed|string
+     */
+    public $processingStatus;
+    /**
+     * @var mixed|string
+     */
+    public $reportId;
 
     /**
      * GetReportRequestStatusResult constructor.
