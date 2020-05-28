@@ -30,17 +30,20 @@ class MWSErrorResult
      */
     public $response;
 
+    /** @var string  */
+    public $body = '';
+
     /**
      * MWSErrorResult constructor.
-     * @param ResponseInterface $response
+     * @param BadResponseException $exception
      */
     public function __construct(BadResponseException $exception)
     {
         if ($exception->hasResponse()) {
             $this->response = $exception->getResponse();
-            $body = $this->response->getBody();
-            if (strpos($body, '<ErrorResponse') !== false) {
-                $error = simplexml_load_string($body);
+            $this->body = $this->response->getBody()->getContents();
+            if (strpos($this->body, '<ErrorResponse') !== false) {
+                $error = simplexml_load_string($this->body);
                 $this->type = $error->Error->Type;
                 $this->code = $error->Error->Code;
                 $this->message = $error->Error->Message;

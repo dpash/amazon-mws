@@ -7,9 +7,11 @@ use Dpash\AmazonMWS\Exceptions\InputStreamDisconnectedException;
 use Dpash\AmazonMWS\Exceptions\InternalErrorException;
 use Dpash\AmazonMWS\Exceptions\InvalidAccessKeyIdException;
 use Dpash\AmazonMWS\Exceptions\InvalidAddressException;
+use Dpash\AmazonMWS\Exceptions\InvalidParameterValueException;
 use Dpash\AmazonMWS\Exceptions\MWSException;
 use Dpash\AmazonMWS\Exceptions\QuotaExceededException;
 use Dpash\AmazonMWS\Exceptions\RequestThrottledException;
+use Dpash\AmazonMWS\Result\GetReportRequestListResult;
 use Dpash\AmazonMWS\Result\GetReportRequestStatusResult;
 use Dpash\AmazonMWS\Result\GetReportResult;
 use Dpash\AmazonMWS\Result\MWSErrorResult;
@@ -1157,23 +1159,17 @@ class MWSClient{
 
     /**
      * Get a report's content
-     * @param string $ReportId
+     * @param string $reportId
      * @return GetReportResult data
      * @throws MWSException
      */
-    public function GetReport($ReportId) : GetReportResult
+    public function GetReport(string $reportId) : GetReportResult
     {
-        $request_status = $this->GetReportRequestStatus($ReportId);
-
-        if ($request_status->status === false or $request_status->processingStatus !== '_DONE_') {
-            return new GetReportResult($request_status);
-        }
-
         $result = $this->request('GetReport', [
-            'ReportId' => $request_status->reportId
+            'ReportId' => $reportId
         ]);
 
-        return new GetReportResult($request_status,  $result);
+        return new GetReportResult($result);
     }
 
     /**
@@ -1189,6 +1185,21 @@ class MWSClient{
         ]);
 
         return new GetReportRequestStatusResult($result);
+    }
+
+    /**
+     * Get a list of report requests
+     * @return GetReportRequestListResult the result of the call
+     * @throws MWSException
+     * @throws Exception
+     */
+    public function GetReportRequestList() : GetReportRequestListResult
+    {
+        $result = $this->request('GetReportRequestList', [
+            'MaxCount' => 100,
+        ]);
+
+        return new GetReportRequestListResult($result);
     }
 
     /**
@@ -1391,8 +1402,11 @@ class MWSClient{
             $error = new MWSErrorResult($e);
             switch ($e->getCode()) {
                 case 400:
-                    throw new InputStreamDisconnectedException($error->message);
-                    // throw new InvalidParameterValue();
+                    if ($error->code === 'InputDataError') {
+                        throw new InvalidParameterValueException($error->message, 0, $e);
+                    } else {
+                        throw new InputStreamDisconnectedException($error->message);
+                    }
                 case 401:
                     throw new AccessDeniedException($error->message);
                 case 403:

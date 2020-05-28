@@ -26,19 +26,10 @@ class GetReportResult
 
     /**
      * GetReportResult constructor.
-     * @param bool $success
-     * @param string $status
-     * @param array $data
+     * @param MWSResult $result
      */
-    public function __construct(GetReportRequestStatusResult $reportStatusResult, MWSResult $result = null)
+    public function __construct(MWSResult $result)
     {
-        $this->status = $reportStatusResult->processingStatus;
-
-        if (is_null($result)) {
-            $this->setResult($reportStatusResult->getResult());
-            $this->success = false;
-            return;
-        }
 
         $this->setResult($result);
 
@@ -47,7 +38,7 @@ class GetReportResult
             return;
         }
 
-        $csv = Reader::createFromString($result->body);
+        $csv = Reader::createFromString($result->getBody());
         $csv->setDelimiter("\t");
         $headers = $csv->fetchOne();
         $data = [];
