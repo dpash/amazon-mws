@@ -11,7 +11,8 @@ class ReportRequestInfo
     const STATUS_DONE = '_DONE_';
     const STATUS_DONE_NO_DATA = '_DONE_NO_DATA_';
     const STATUS_CANCELLED = '_CANCELLED_';
-    const STATUS_SUBMITTED = 'SUBMITTED_';
+    const STATUS_IN_PROGRESS = '_IN_PROGRESS_';
+    const STATUS_SUBMITTED = '_SUBMITTED_';
     /**
      * @var string A unique report request identifier.
      */
@@ -72,11 +73,11 @@ class ReportRequestInfo
     {
         $this->reportType = $info['ReportType'];
         $this->processingStatus = $info['ReportProcessingStatus'];
-        $this->endDate = $info['EndDate'];
+        $this->endDate = new DateTime($info['EndDate']);
         $this->scheduled = $info['Scheduled'];
-        $this->reportRequestId =$info['ReportRequestId'];
-        $this->submittedDate = $info['SubmittedDate'];
-        $this->startDate = $info['StartDate'];
+        $this->reportRequestId = $info['ReportRequestId'];
+        $this->submittedDate = new DateTime($info['SubmittedDate']);
+        $this->startDate = new DateTime($info['StartDate']);
 
         switch ($this->processingStatus) {
             /** @noinspection PhpMissingBreakStatementInspection */
@@ -86,10 +87,10 @@ class ReportRequestInfo
             case '_CANCELLED_';
             /** @noinspection PhpMissingBreakStatementInspection */
             case '_DONE_NO_DATA_':
-                $this->completedDate = $info['CompletedDate'];
+                $this->completedDate = new DateTime($info['CompletedDate']);
                 // Intentional fall through
             case '_IN_PROGRESS_':
-                $this->startedProcessingDate = $info['StartedProcessingDate'];
+                $this->startedProcessingDate = new DateTime($info['StartedProcessingDate']);
                 break;
             case '_SUBMITTED_':
                 // do nothing
@@ -160,7 +161,7 @@ class ReportRequestInfo
     /**
      * @return string
      */
-    public function getGeneratedReportId(): string
+    public function getGeneratedReportId(): ?string
     {
         return $this->generatedReportId;
     }
