@@ -24,11 +24,11 @@ class MWSResult
     /**
      * @var int
      */
-    public $quota_max;
+    public $quota_max = 0;
     /**
      * @var int
      */
-    public $quota_remaining;
+    public $quota_remaining = 0;
     /**
      * @var \DateTime
      */
@@ -43,9 +43,17 @@ class MWSResult
         $this->response = $response;
         $this->rawBody = (string) $response->getBody();
 
-        $this->quota_max = intval($response->getHeader('x-mws-quota-max')[0]);
-        $this->quota_remaining =  intval($response->getHeader('x-mws-quota-remaining')[0]);
-        $this->quota_reset =  new \DateTime($response->getHeader('x-mws-quota-resetsOn')[0]);
+        if ($response->hasHeader('x-mws-quota-max')) {
+            $this->quota_max = intval($response->getHeader('x-mws-quota-max')[0]);
+        }
+        if ($response->hasHeader('x-mws-quota-remaining')) {
+            $this->quota_remaining = intval($response->getHeader('x-mws-quota-remaining')[0]);
+        }
+         if ($response->hasHeader('x-mws-quota-resetsOn')) {
+             $this->quota_reset = new \DateTime($response->getHeader('x-mws-quota-resetsOn')[0]);
+         } else {
+            $this->quota_reset = new \DateTime('now');
+         }
 
         if(preg_match('/^ERROR:/', $this->rawBody)) {
             throw new \Dpash\AmazonMWS\Exceptions\Exception($this->rawBody);
