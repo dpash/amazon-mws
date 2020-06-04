@@ -11,6 +11,7 @@ use Dpash\AmazonMWS\Exceptions\InvalidParameterValueException;
 use Dpash\AmazonMWS\Exceptions\MWSException;
 use Dpash\AmazonMWS\Exceptions\QuotaExceededException;
 use Dpash\AmazonMWS\Exceptions\RequestThrottledException;
+use Dpash\AmazonMWS\Result\GetOrderResult;
 use Dpash\AmazonMWS\Result\GetReportRequestListResult;
 use Dpash\AmazonMWS\Result\GetReportRequestStatusResult;
 use Dpash\AmazonMWS\Result\GetReportResult;
@@ -522,11 +523,11 @@ class MWSClient{
 
     /**
      * Returns an order based on the AmazonOrderId values that you specify.
-     * @param string $AmazonOrderId
-     * @return array if the order is found, false if not
+     * @param string|string[] $AmazonOrderIds
+     * @return GetOrderResult
      * @throws Exception
      */
-    public function GetOrder($AmazonOrderIds)
+    public function GetOrder($AmazonOrderIds) : GetOrderResult
     {
         if(!is_array($AmazonOrderIds)){
             $AmazonOrderIds = [$AmazonOrderIds];
@@ -539,13 +540,7 @@ class MWSClient{
             $data['AmazonOrderId.Id.'.($i++)] = $id;
         }
 
-        $response = $this->request('GetOrder', $data)->xmlBody;
-
-        if (isset($response['GetOrderResult']['Orders']['Order'])) {
-            return $response['GetOrderResult']['Orders']['Order'];
-        } else {
-            return false;
-        }
+        return new GetOrderResult($this->request('GetOrder', $data));
     }
 
     /**
