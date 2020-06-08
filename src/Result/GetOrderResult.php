@@ -14,7 +14,7 @@ class GetOrderResult
     /**
      * @var Order[]
      */
-    private $orders;
+    private $orders = [];
 
     /**
      * GetOrderResult constructor.
@@ -32,10 +32,10 @@ class GetOrderResult
         }
 
         if (array_key_exists('AmazonOrderId', $response['GetOrderResult']['Orders']['Order'])) {
-            $orders[] = new Order($response['GetOrderResult']['Orders']['Order']);
+            $this->orders[] = new Order($response['GetOrderResult']['Orders']['Order']);
         } else {
             foreach ($response['GetOrderResult']['Orders']['Order'] as $order_data) {
-                $orders[] = new Order($order_data);
+                $this->orders[] = new Order($order_data);
             }
         }
     }
