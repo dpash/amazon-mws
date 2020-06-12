@@ -11,6 +11,7 @@ use Dpash\AmazonMWS\Exceptions\InvalidParameterValueException;
 use Dpash\AmazonMWS\Exceptions\MWSException;
 use Dpash\AmazonMWS\Exceptions\QuotaExceededException;
 use Dpash\AmazonMWS\Exceptions\RequestThrottledException;
+use Dpash\AmazonMWS\Request\GetReportRequestListRequest;
 use Dpash\AmazonMWS\Result\GetOrderResult;
 use Dpash\AmazonMWS\Result\GetReportRequestListResult;
 use Dpash\AmazonMWS\Result\GetReportRequestStatusResult;
@@ -1184,15 +1185,17 @@ class MWSClient{
 
     /**
      * Get a list of report requests
+     * @param GetReportRequestListRequest $request
      * @return GetReportRequestListResult the result of the call
      * @throws MWSException
-     * @throws Exception
      */
-    public function GetReportRequestList() : GetReportRequestListResult
+    public function GetReportRequestList(GetReportRequestListRequest $request = null) : GetReportRequestListResult
     {
-        $result = $this->request('GetReportRequestList', [
-            'MaxCount' => 100,
-        ]);
+        if(is_null($request)) {
+            $request = new GetReportRequestListRequest();
+        }
+
+        $result = $this->request('GetReportRequestList', $request->getQuery() );
 
         return new GetReportRequestListResult($result);
     }

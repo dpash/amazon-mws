@@ -10,7 +10,7 @@ class GetReportRequestListResult
     /**
      * @var string
      */
-    private $nextToken;
+    private $nextToken = "";
     /**
      * @var bool
      */
@@ -28,7 +28,9 @@ class GetReportRequestListResult
     public function __construct(MWSResult $result)
     {
         $body = $result->getBodyAsHash();
-        $this->nextToken = $body['GetReportRequestListResult']['NextToken'];
+        if (array_key_exists('NextToken', $body['GetReportRequestListResult'])) {
+            $this->nextToken = $body['GetReportRequestListResult']['NextToken'];
+        }
         $this->hasNext = $body['GetReportRequestListResult']['HasNext'];
         foreach($body['GetReportRequestListResult']['ReportRequestInfo'] as $info) {
             $this->info[] = new ReportRequestInfo($info);
@@ -36,7 +38,7 @@ class GetReportRequestListResult
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getNextToken() : string
     {
