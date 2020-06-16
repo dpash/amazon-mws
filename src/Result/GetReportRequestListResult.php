@@ -32,8 +32,13 @@ class GetReportRequestListResult
             $this->nextToken = $body['GetReportRequestListResult']['NextToken'];
         }
         $this->hasNext = $body['GetReportRequestListResult']['HasNext'];
-        foreach($body['GetReportRequestListResult']['ReportRequestInfo'] as $info) {
-            $this->info[] = new ReportRequestInfo($info);
+
+        if (array_key_exists('ReportRequestId', $body['GetReportRequestListResult']['ReportRequestInfo'])) {
+            $this->info[] = new ReportRequestInfo($body['GetReportRequestListResult']['ReportRequestInfo']);
+        } else {
+            foreach($body['GetReportRequestListResult']['ReportRequestInfo'] as $info) {
+                $this->info[] = new ReportRequestInfo($info);
+            }
         }
     }
 
